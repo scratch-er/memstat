@@ -4,8 +4,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+void print_usage();
+
 int main(int argc, char **argv) {
+    if (argc < 3) {
+        print_usage();
+        return 1;
+    }
     int interval = atoi(argv[1]);
+    if (interval == 0) {
+        print_usage();
+        return 2;
+    }
     pid_t pid = fork();
     if (pid == 0) {
         execvp(argv[2], argv+2);
@@ -19,7 +29,7 @@ int main(int argc, char **argv) {
         FILE *record = fopen("memstat.data", "wt");
         if (record == NULL) {
             printf("failed to open memstat.data\n");
-            return -1;
+            return 3;
         }
         while ((statm=fopen(filename, "rt"))) {
             // 读取并记录内存使用
@@ -35,4 +45,14 @@ int main(int argc, char **argv) {
         fclose(record);
         return 0;
     }
+}
+
+void print_usage() {
+    puts(
+        "Usage:\n"
+        "memstat <interval_us> <command> <arguments>\n"
+        "\tinterval_us: the interval of samples in microseconds\n"
+        "\tcommand: the program to be measured\n"
+        "\targuments: the arguments passed to the program to be measured\n"
+    );
 }
