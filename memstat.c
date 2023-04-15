@@ -8,13 +8,13 @@ int main(int argc, char **argv) {
     int interval = atoi(argv[1]);
     pid_t pid = fork();
     if (pid == 0) {
-        execvp(argv[2], argv+3);
+        execvp(argv[2], argv+2);
     } else if (pid < 0) {
         return pid;
     } else {
         char filename[20];
         char content[150];
-        printf("%s\n", filename);
+        sprintf(filename, "/proc/%d/statm", pid);
         FILE *statm;
         FILE *record = fopen("memstat.data", "wt");
         if (record == NULL) {
